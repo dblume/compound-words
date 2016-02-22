@@ -22,4 +22,4 @@ It downloads the data file itself, if you didn't get it beforehand.
 
 ### Licence
 
-This software uses the [WTFPL](http://www.wtfpl.net/).
+This software uses the [MIT license](https://github.com/dblume/compound-words/blob/master/LICENSE.txt).

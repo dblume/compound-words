@@ -142,7 +142,7 @@ def main():
         print doublet
 
     v_print("Count was %d. There were %d doublets." % (count, doublet_count))
-    if len(line) == 0:
+    if not line:
         v_print('Processed all the words in the wordlist.')
     else:
         v_print("Got as far as \"%s\" in the word list" % (repr(line)))
