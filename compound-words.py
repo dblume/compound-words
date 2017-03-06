@@ -11,7 +11,7 @@ import urllib
 import zipfile
 
 __author__ = "David Blume"
-__license__ = "WTFPL"
+__license__ = "MIT"
 
 nouns = set()
 other_words = set()
@@ -72,6 +72,20 @@ def process_line(f, line):
     return count
 
 
+def find_subwords(words, e_subwords, b_subwords):
+    for word in words:
+        l = len(word) - 1
+        for i in range(1, l):
+            esubword = word[i:]
+            bsubword = word[:i]
+            if esubword in nouns:
+                e_subwords.add((bsubword, esubword))
+            if i > 1 and bsubword in nouns:
+                b_subwords.add((bsubword, esubword))
+            if i > 1 and bsubword in other_words:
+                b_subwords.add((bsubword, esubword))
+
+
 def main():
     start_time = time.time()
     count = 0
@@ -106,29 +120,8 @@ def main():
     # example: "island" terminates in "land", and "penis" starts with "pen".
     e_subwords = set()
     b_subwords = set()
-    for word in nouns:
-        l = len(word) - 1
-        for i in range(1, l):
-            esubword = word[i:]
-            bsubword = word[:i]
-            if esubword in nouns:
-                e_subwords.add((bsubword, esubword))
-            if i > 1 and bsubword in nouns:
-                b_subwords.add((bsubword, esubword))
-            if i > 1 and bsubword in other_words:
-                b_subwords.add((bsubword, esubword))
-
-    for word in other_words:
-        l = len(word) - 1
-        for i in range(1, l):
-            esubword = word[i:]
-            bsubword = word[:i]
-            if esubword in nouns:
-                e_subwords.add((bsubword, esubword))
-            if i > 1 and bsubword in nouns:
-                b_subwords.add((bsubword, esubword))
-            if i > 1 and bsubword in other_words:
-                b_subwords.add((bsubword, esubword))
+    find_subwords(nouns, e_subwords, b_subwords)
+    find_subwords(other_words, e_subwords, b_subwords)
 
     doublet_count = 0
     doublets = []
