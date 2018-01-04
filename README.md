@@ -1,7 +1,7 @@
 [![Code Climate](https://codeclimate.com/github/dblume/compound-words/badges/gpa.svg)](https://codeclimate.com/github/dblume/compound-words)
 [![Issue Count](https://codeclimate.com/github/dblume/compound-words/badges/issue_count.svg)](https://codeclimate.com/github/dblume/compound-words/issues)
 [![License](https://img.shields.io/badge/license-MIT_license-blue.svg)](https://raw.githubusercontent.com/dblume/compound-words/master/LICENSE)
-![python2.x](https://img.shields.io/badge/python-2.x-yellow.svg)
+![python3.x](https://img.shields.io/badge/python-3.x-green.svg)
 # compound-words
 
 There's an old story about a pen retailer that opened an online store,

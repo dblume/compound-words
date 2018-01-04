@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Looks for other interesting compound words like
 # "pen-island" and "penis-land".
@@ -7,7 +7,7 @@
 import os
 import time
 from argparse import ArgumentParser
-import urllib
+import urllib.request
 import zipfile
 
 __author__ = "David Blume"
@@ -27,18 +27,14 @@ def set_v_print(verbose):
     :param verbose: A bool to determine if v_print will print its args.
     """
     global v_print
-    if verbose:
-        def v_print(*s):
-            print ' '.join([i.encode('utf8') for i in s])
-    else:
-        v_print = lambda *s: None
+    v_print = print if verbose else lambda *a, **k: None
 
 
 def process_variants(f, word_set):
     count = 0
     while True:
         last_pos = f.tell()
-        line = f.readline()
+        line = f.readline().decode('UTF-8')
         parts = line.strip().split('\t')
         if len(parts) > 3 and parts[0] == '@':
             if parts[2].isalpha():
@@ -96,18 +92,18 @@ def get_source_words():
         v_print('1_1_all_fullalpha.txt not found, so extracting it...')
         if not os.path.isfile('1_1_all_fullalpha.zip'):
             v_print('1_1_all_fullalpha.zip not found, so downloading it...')
-            testfile = urllib.URLopener()
-            testfile.retrieve('http://ucrel.lancs.ac.uk/bncfreq/lists/1_1_all_fullalpha.zip',
-                              '1_1_all_fullalpha.zip')
+            urllib.request.urlretrieve(
+                'http://ucrel.lancs.ac.uk/bncfreq/lists/1_1_all_fullalpha.zip',
+                filename='1_1_all_fullalpha.zip')
         with zipfile.ZipFile('1_1_all_fullalpha.zip') as zf:
             zf.extract('1_1_all_fullalpha.txt')
 
     # First, makes sets of all the nouns and other interesting words
     with open('1_1_all_fullalpha.txt', 'rb') as f:
-        line = f.readline()
+        line = f.readline().decode('UTF-8')
         while line != '':
             count += process_line(f, line)
-            line = f.readline()
+            line = f.readline().decode('UTF-8')
             if count > max_words_to_check:
                 v_print('Only reading %d words.' % (max_words_to_check, ))
                 break
@@ -142,7 +138,7 @@ def find_doublets():
                 doublet_count += 1
 
     for doublet in sorted(doublets):
-        print doublet
+        print(doublet)
 
     v_print("There were %d doublets." % (doublet_count, ))
 
@@ -153,8 +149,10 @@ def main():
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser(description='Just a template sample.')
-    parser.add_argument('-v', '--verbose', action='store_true')
+    description = 'Finds word pairs that can also be made from another pair.'
+    parser = ArgumentParser(description=description)
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='print additional output')
     args = parser.parse_args()
     set_v_print(args.verbose)
     main()
