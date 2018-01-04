@@ -64,7 +64,8 @@ def add_to_set(f, parts, word_set):
 def process_line(f, line):
     count = 0
     parts = line.strip().split('\t')
-    if len(parts) > 3 and parts[0].isalpha() and int(parts[4]) >= minimum_num_sources:
+    if (len(parts) > 3 and parts[0].isalpha() and
+        int(parts[4]) >= minimum_num_sources):
         if parts[1] == 'NoC':  # Maybe consider or parts[1] == 'NoP'
             count += add_to_set(f, parts, nouns)
         elif parts[1] == 'Adj':
@@ -73,6 +74,7 @@ def process_line(f, line):
 
 
 def find_subwords(words, e_subwords, b_subwords):
+    """Split each word in words into its constituent words, if any."""
     for word in words:
         l = len(word) - 1
         for i in range(1, l):
@@ -86,17 +88,17 @@ def find_subwords(words, e_subwords, b_subwords):
                 b_subwords.add((bsubword, esubword))
 
 
-def main():
-    start_time = time.time()
+def get_source_words():
+    """Populate the sets "nouns" and "other_words". """
     count = 0
-
     # If you didn't get the datafile beforehand, we'll try now.
     if not os.path.isfile('1_1_all_fullalpha.txt'):
         v_print('1_1_all_fullalpha.txt not found, so extracting it...')
         if not os.path.isfile('1_1_all_fullalpha.zip'):
             v_print('1_1_all_fullalpha.zip not found, so downloading it...')
             testfile = urllib.URLopener()
-            testfile.retrieve('http://ucrel.lancs.ac.uk/bncfreq/lists/1_1_all_fullalpha.zip', '1_1_all_fullalpha.zip')
+            testfile.retrieve('http://ucrel.lancs.ac.uk/bncfreq/lists/1_1_all_fullalpha.zip',
+                              '1_1_all_fullalpha.zip')
         with zipfile.ZipFile('1_1_all_fullalpha.zip') as zf:
             zf.extract('1_1_all_fullalpha.txt')
 
@@ -107,17 +109,22 @@ def main():
             count += process_line(f, line)
             line = f.readline()
             if count > max_words_to_check:
+                v_print('Only reading %d words.' % (max_words_to_check, ))
                 break
 
-    # If you set minimum_num_sources too low, you get things that are not words.
-    for word in ('a', 'ad', 'ap', 'dr', 'st', 'co', 'pa', 'go', 'ba'):
+    # If you set minimum_num_sources too low,
+    # you get things that are not words.
+    for word in ('a', 'ad', 'ap', 'dr', 'st', 'co',
+                 'pa', 'go', 'ba', 'se', 'ch'):
         if word in nouns:
             nouns.remove(word)
         if word in other_words:
             other_words.remove(word)
 
-    # Find the words that terminate in other words, or that begin with other words.
-    # example: "island" terminates in "land", and "penis" starts with "pen".
+
+def find_doublets():
+    """Find the words that end with other words, or that begin with other words.
+    example: "island" ends with "land", and "penis" starts with "pen". """
     e_subwords = set()
     b_subwords = set()
     find_subwords(nouns, e_subwords, b_subwords)
@@ -128,18 +135,21 @@ def main():
     for etuple in e_subwords:
         for btuple in b_subwords:
             if etuple[0] == btuple[1]:
-                doublets.append("%s-%s, %s-%s" % (btuple[0], btuple[1]+etuple[1], btuple[0]+btuple[1], etuple[1]))
+                doublets.append("%s-%s, %s-%s" % (btuple[0],
+                                                  btuple[1]+etuple[1],
+                                                  btuple[0]+btuple[1],
+                                                  etuple[1]))
                 doublet_count += 1
 
     for doublet in sorted(doublets):
         print doublet
 
-    v_print("Count was %d. There were %d doublets." % (count, doublet_count))
-    if not line:
-        v_print('Processed all the words in the wordlist.')
-    else:
-        v_print("Got as far as \"%s\" in the word list" % (repr(line)))
-    v_print("Done.  That took %1.2fs." % (time.time() - start_time))
+    v_print("There were %d doublets." % (doublet_count, ))
+
+
+def main():
+    get_source_words()
+    find_doublets()
 
 
 if __name__ == '__main__':
