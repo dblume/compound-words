@@ -11,6 +11,22 @@ could also be read as "penis land".
 I wanted to see what other interesting compound words there are that
 could be broken down in more than one ways.
 
+### Sample Output
+
+Here's an extract of the output it generates with the default values:
+
+    ...
+    remote-start, remotest-art
+    topic-albums, topical-bums
+    war-timescale, wartime-scale
+    work-mankind, workman-kind
+    wild-lifestyle, wildlife-style
+    wood-entry, wooden-try
+    work-shopkeeper, workshop-keeper
+    ...
+    There were 10456 doublets.
+
+
 ### Current Features
 
 It downloads the data file itself, if you didn't get it beforehand.
