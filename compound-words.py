@@ -9,17 +9,19 @@ import time
 from argparse import ArgumentParser
 import urllib.request
 import zipfile
+from typing import Callable, BinaryIO, Set, List, Tuple
 
 __author__ = "David Blume"
 __license__ = "MIT"
 
-nouns = set()
-other_words = set()
+nouns: Set[str] = set()
+other_words: Set[str] = set()
 minimum_num_sources = 60
 max_words_to_check = 20000
 
 
-def set_v_print(verbose):
+v_print:Callable
+def set_v_print(verbose: bool) -> None:
     """
     Defines the function v_print.
     It prints if verbose is true, otherwise, it does nothing.
@@ -30,7 +32,7 @@ def set_v_print(verbose):
     v_print = print if verbose else lambda *a, **k: None
 
 
-def process_variants(f, word_set):
+def process_variants(f: BinaryIO, word_set: Set[str]) -> int:
     count = 0
     while True:
         last_pos = f.tell()
@@ -46,7 +48,7 @@ def process_variants(f, word_set):
     return count
 
 
-def add_to_set(f, parts, word_set):
+def add_to_set(f: BinaryIO, parts: List[str], word_set: Set[str]) -> int:
     count = 0
     if parts[2] == ':':
         word_set.add(parts[0].lower())
@@ -57,7 +59,7 @@ def add_to_set(f, parts, word_set):
     return count
 
 
-def process_line(f, line):
+def process_line(f: BinaryIO, line: str) -> int:
     count = 0
     parts = line.strip().split('\t')
     if (len(parts) > 3 and parts[0].isalpha() and
@@ -69,7 +71,7 @@ def process_line(f, line):
     return count
 
 
-def find_subwords(words, e_subwords, b_subwords):
+def find_subwords(words: Set[str], e_subwords: Set[Tuple[str, str]], b_subwords: Set[Tuple[str, str]]) -> None:
     """Split each word in words into its constituent words, if any."""
     for word in words:
         l = len(word) - 1
@@ -84,7 +86,7 @@ def find_subwords(words, e_subwords, b_subwords):
                 b_subwords.add((bsubword, esubword))
 
 
-def get_source_words():
+def get_source_words() -> None:
     """Populate the sets "nouns" and "other_words". """
     count = 0
     # If you didn't get the datafile beforehand, we'll try now.
@@ -118,11 +120,11 @@ def get_source_words():
             other_words.remove(word)
 
 
-def find_doublets():
+def find_doublets() -> None:
     """Find the words that end with other words, or that begin with other words.
     example: "island" ends with "land", and "penis" starts with "pen". """
-    e_subwords = set()
-    b_subwords = set()
+    e_subwords: Set[Tuple[str, str]] = set()
+    b_subwords: Set[Tuple[str, str]] = set()
     find_subwords(nouns, e_subwords, b_subwords)
     find_subwords(other_words, e_subwords, b_subwords)
 
@@ -143,7 +145,7 @@ def find_doublets():
     v_print("There were %d doublets." % (doublet_count, ))
 
 
-def main():
+def main() -> None:
     get_source_words()
     find_doublets()
 
