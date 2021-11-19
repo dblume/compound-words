@@ -1,6 +1,6 @@
 [![Code Climate](https://codeclimate.com/github/dblume/compound-words/badges/gpa.svg)](https://codeclimate.com/github/dblume/compound-words)
 [![Issue Count](https://codeclimate.com/github/dblume/compound-words/badges/issue_count.svg)](https://codeclimate.com/github/dblume/compound-words/issues)
-[![License](https://img.shields.io/badge/license-MIT_license-blue.svg)](https://raw.githubusercontent.com/dblume/compound-words/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT_license-blue.svg)](https://raw.githubusercontent.com/dblume/compound-words/main/LICENSE)
 ![python3.x](https://img.shields.io/badge/python-3.x-green.svg)
 # compound-words
 
@@ -42,4 +42,4 @@ It downloads the data file itself, if you didn't get it beforehand.
 
 ### Licence
 
-This software uses the [MIT license](https://github.com/dblume/compound-words/blob/master/LICENSE.txt).
+This software uses the [MIT license](https://github.com/dblume/compound-words/blob/main/LICENSE.txt).
